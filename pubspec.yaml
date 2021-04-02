@@ -24,6 +24,8 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^5.0.0
+  file_selector:
+  file_selector_macos: ^0.0.4
   window_size:
     git: 
       url: git://github.com/google/flutter-desktop-embedding.git

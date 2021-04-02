@@ -42,17 +42,18 @@ enum Encoding {
 }
 
 class Settings extends ChangeNotifier {
-  bool processViaUTP = false;
-  bool processViaDeviceStorage = true;
+  bool _processViaUTP = false;
+  bool _processViaDeviceStorage = true;
   int _port = 1235;
-  int liveModeWaitingTime = 0;
+  int _liveModeWaitingTime = 0;
   bool _addOnlyKnownVideoFormats = false;
-  InputType inputType = InputType.Autodetect_the_correct_format;
-  OutputType outputType = OutputType.Srt_SubRip;
-  SplitType splitType = SplitType
+  InputType _inputType = InputType.Autodetect_the_correct_format;
+  OutputType _outputType = OutputType.Srt_SubRip;
+  SplitType _splitType = SplitType
       .These_are_individual_unrelated_files_Produce_an_output_subtitle_file_for_each_input_file;
   Mode mode = Mode.This_is_a_complete_recording;
-  Encoding encoding = Encoding.Latin_1;
+  Encoding _encoding = Encoding.Latin_1;
+  var _commandLine = 'ccextractor';
   final inputTypes = [
     'Autodetect the correct format',
     'Program streams',
@@ -68,6 +69,21 @@ class Settings extends ChangeNotifier {
     'M2TS',
     'MKV',
   ];
+  final inputFormats = [
+    '',
+    'ps',
+    'asf',
+    'bin',
+    'mxf',
+    'ts',
+    'es',
+    'raw',
+    'mp4',
+    '',
+    'wtv',
+    'm2ts',
+    'mkv',
+  ];
   final outputTypes = [
     '.srt (SubRip)',
     ".raw (CC data in McPoodle's broadcast format",
@@ -75,14 +91,30 @@ class Settings extends ChangeNotifier {
     ".dvdram (CC data in McPoodle's DVD format",
     '.txt (Transcript, no timing',
   ];
+  final outputFormats = [
+    'srt',
+    'raw',
+    'sami',
+    'dvdram',
+    'txt',
+  ];
   final splitTypes = [
     'These are individual, unrelated files. Produce an output subtitle file for each input file.',
     'These files are part of the same video. They were cut with a video tool.',
     'These files are part of the same video. They were cut by a generic tool.',
   ];
+  final splitFormats = [
+    '',
+    've',
+    '',
+  ];
   final modes = [
     'This is a complete recording',
     'This is live.',
+  ];
+  final modeFormat = [
+    '',
+    's',
   ];
   final encodings = [
     'Latin-1',
@@ -90,12 +122,42 @@ class Settings extends ChangeNotifier {
     'Unicode',
   ];
 
+  List<String> arguments = [
+    '--gui_mode_reports',
+  ];
+
+  List<String> _filePaths = [];
+
   get port {
     return _port;
   }
 
   get addOnlyKnownVideoFormats {
     return _addOnlyKnownVideoFormats;
+  }
+
+  get inputType {
+    return _inputType;
+  }
+
+  get outputType {
+    return _outputType;
+  }
+
+  get splitType {
+    return _splitType;
+  }
+
+  get encoding {
+    return _encoding;
+  }
+
+  String get commandLine {
+    return _commandLine;
+  }
+
+  List<String> get files {
+    return _filePaths;
   }
 
   updateAddOnlyKnownVideoFormats(bool value) {
@@ -107,5 +169,59 @@ class Settings extends ChangeNotifier {
     _port = newPort;
     print(newPort);
     notifyListeners();
+    updateCommandLine();
+  }
+
+  updateInputType(InputType inputType) {
+    _inputType = inputType;
+    updateCommandLine();
+  }
+
+  updateOutputType(OutputType outputType) {
+    _outputType = outputType;
+    updateCommandLine();
+  }
+
+  updateSplitType(SplitType splitType) {
+    _splitType = splitType;
+    updateCommandLine();
+  }
+
+  updateInputFiles(String path) {
+    _filePaths.add(path);
+    updateCommandLine();
+  }
+
+  resetInputFiles() {
+    _filePaths.clear();
+    updateCommandLine();
+  }
+
+  updateCommandLine() {
+    arguments = [
+      '--gui_mode_reports',
+      ...settings,
+      ..._filePaths,
+    ];
+    _commandLine = 'ccextractor ' + arguments.join(' ');
+    notifyListeners();
+  }
+
+  List<String> get settings {
+    String inputFormat = inputFormats[_inputType.index].isEmpty
+        ? ''
+        : '-in=' + inputFormats[_inputType.index];
+    String outputFormat = outputFormats[_outputType.index].isEmpty
+        ? ''
+        : '-out=' + outputFormats[_outputType.index];
+    String splitFormat = splitFormats[_splitType.index].isEmpty
+        ? ''
+        : '-' + splitFormats[_splitType.index];
+    return [inputFormat, outputFormat, splitFormat];
+  }
+
+  List<String> get commandLineArguments {
+    updateCommandLine();
+    return arguments;
   }
 }

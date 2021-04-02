@@ -1,7 +1,7 @@
 import 'package:ccextractor/components/dropdown_widget.dart';
 import 'package:ccextractor/components/files_drop_widget.dart';
 import 'package:ccextractor/components/preview.dart';
-import 'package:ccextractor/models/settingsProperty.dart';
+import 'package:ccextractor/models/settings_property.dart';
 import 'package:ccextractor/providers/activity_provider.dart';
 import 'package:ccextractor/providers/settings.dart';
 import 'package:ccextractor/res/constants.dart';
@@ -86,34 +86,22 @@ class Dashboard extends StatelessWidget {
   }
 }
 
-class ExtractButton extends StatefulWidget {
-  @override
-  _ExtractButtonState createState() => _ExtractButtonState();
-}
-
-class _ExtractButtonState extends State<ExtractButton> {
-  bool _isExtracting = false;
+class ExtractButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 55,
-      margin: EdgeInsets.only(left: 8, right: 4),
-      child: ElevatedButton(
-        onPressed: _isExtracting
-            ? null
-            : () async {
-                setState(() {
-                  _isExtracting = true;
-                });
-                await Provider.of<ActivityProvider>(context, listen: false)
-                    .extract();
-                setState(() {
-                  _isExtracting = false;
-                });
-              },
-        child: Text(
-          'EXTRACT',
-          overflow: TextOverflow.ellipsis,
+    return Consumer<ActivityProvider>(
+      builder: (context, activity, child) => Container(
+        height: 55,
+        margin: EdgeInsets.only(left: 8, right: 4),
+        child: ElevatedButton(
+          onPressed: activity.status == Status.Starting ||
+                  activity.status == Status.Running
+              ? null
+              : () => activity.extract(),
+          child: const Text(
+            'EXTRACT',
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ),
     );

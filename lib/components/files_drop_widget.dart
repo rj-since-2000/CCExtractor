@@ -1,6 +1,7 @@
 import 'package:ccextractor/components/sub_components/custom_divider.dart';
 import 'package:ccextractor/providers/settings.dart';
 import 'package:ccextractor/res/constants.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +38,9 @@ class FilesDropWidget extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        settings.resetInputFiles();
+                      },
                       child: Text(
                         'CLEAR LIST',
                         overflow: TextOverflow.ellipsis,
@@ -50,16 +53,26 @@ class FilesDropWidget extends StatelessWidget {
               CustomDivider(),
               Expanded(
                 child: Container(
-                  child: Center(
-                    child: Text(
-                      'Drag & Drop files here...',
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: secondaryText,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
+                  child: settings.files.length == 0
+                      ? Center(
+                          child: Text(
+                            'Drag & Drop files here...',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: secondaryText,
+                              fontSize: 18,
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: settings.files.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              dense: true,
+                              title: Text(settings.files[index]),
+                            );
+                          },
+                        ),
                 ),
               ),
               CustomDivider(),
@@ -83,7 +96,15 @@ class FilesDropWidget extends StatelessWidget {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final typeGroup =
+                          XTypeGroup(label: 'images', extensions: [
+                        'ts',
+                      ]);
+                      final file =
+                          await openFile(acceptedTypeGroups: [typeGroup]);
+                      settings.updateInputFiles(file!.path);
+                    },
                     child: Padding(
                       padding:
                           const EdgeInsets.symmetric(horizontal: padding / 2),

@@ -1,6 +1,7 @@
 import 'package:ccextractor/components/sub_components/activity_tile.dart';
 import 'package:ccextractor/components/sub_components/custom_divider.dart';
 import 'package:ccextractor/providers/activity_provider.dart';
+import 'package:ccextractor/providers/settings.dart';
 import 'package:ccextractor/res/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -39,9 +40,11 @@ class BottomInterface extends StatelessWidget {
                   margin: EdgeInsets.only(top: 2, bottom: 2, right: padding),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: SelectableText(
-                      activityProvider.commandLine,
-                      textAlign: TextAlign.start,
+                    child: Consumer<Settings>(
+                      builder: (context, settings, child) => SelectableText(
+                        settings.commandLine,
+                        textAlign: TextAlign.start,
+                      ),
                     ),
                   ),
                 ),

@@ -26,11 +26,13 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<MenuProvider>(
             create: (context) => MenuProvider()),
-        ChangeNotifierProvider<ActivityProvider>(
-          create: (context) => ActivityProvider(),
-        ),
         ChangeNotifierProvider<Settings>(
           create: (context) => Settings(),
+        ),
+        ChangeNotifierProxyProvider<Settings, ActivityProvider>(
+          create: (context) => ActivityProvider(Settings()),
+          update: (context, settings, previousActivity) =>
+              ActivityProvider(settings),
         ),
       ],
       child: MaterialApp(

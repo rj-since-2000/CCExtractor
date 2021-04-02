@@ -1,5 +1,5 @@
 import 'package:ccextractor/components/sub_components/custom_divider.dart';
-import 'package:ccextractor/models/settingsProperty.dart';
+import 'package:ccextractor/models/settings_property.dart';
 import 'package:ccextractor/providers/settings.dart';
 import 'package:ccextractor/res/constants.dart';
 import 'package:flutter/material.dart';
@@ -43,13 +43,13 @@ class _DropdownWidgetState extends State<DropdownWidget> {
         _settingsProvider.updatePort(newValue);
         break;
       case Property.InputType:
-        _settingsProvider.inputType = newValue;
+        _settingsProvider.updateInputType(newValue);
         break;
       case Property.OutputType:
-        _settingsProvider.outputType = newValue;
+        _settingsProvider.updateOutputType(newValue);
         break;
       case Property.SplitType:
-        _settingsProvider.splitType = newValue;
+        _settingsProvider.updateSplitType(newValue);
         break;
       case Property.Mode:
         _settingsProvider.mode = newValue;
